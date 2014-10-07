@@ -1,0 +1,14 @@
+---
+title: "First code"
+output: html_document
+---
+
+```{r my_first_code}
+x <- rnorm(100)
+```
+
+Checking the variable:
+```{r summary}
+mean(x)
+hist(x)
+```
