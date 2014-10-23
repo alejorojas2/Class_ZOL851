@@ -25,10 +25,29 @@ dll.data$tarsus.scaled <- scale(dll.data$tarsus, center=TRUE, scale=FALSE)
 with(dll.data, table(genotype, line, temp))
 
 #1 - pick one line and temperature combination and generate a data subset to use. You should try to use something with reasonable sample sizes for each group.
+dll.sub <- subset(dll.data, dll.data$line=="line-18" & dll.data$temp=="30")
+with(dll.sub, table(genotype, line, temp))
 
+dll.sub_wt <- subset(dll.sub, dll.sub$genotype=="wt")
+dll.sub_Dl <- subset(dll.sub, dll.sub$genotype=="Dll")
 #2 Compute the CV for each group.
+CV_wt <- CV(dll.sub_wt$SCT)
+CV_wt
+CV_Dll <- CV(dll.sub_Dl$SCT)
+CV_Dll
 
 #3 Use a np bootstrap to compare CV between each group.
+BootstrapCV <- function(x){
+  x.boot <- sample(x, size=length(x), replace=T)
+  CV(x.boot) }
+
+boot.wt <- replicate(10000, BootstrapCV(dll.sub_wt$SCT))
+boot.Dll <- replicate(10000, BootstrapCV(dll.sub_Dl$SCT))
+hist(boot.wt, border="blue", xlim = c(min(boot.wt), max(boot.Dll)))
+hist(boot.Dll, border="red", add=T)
+
+quantile(boot.wt, probs = c(0.025, 0.975))
+quantile(boot.Dll, probs = c(0.025, 0.975))
 
 #4 Can you think of a way to implement a permutation test for this?
 
