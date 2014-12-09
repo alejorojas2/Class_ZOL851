@@ -1,7 +1,12 @@
 ---
 title: "Final Project QMEE"
 author: "Alejandro Rojas"
-output: html_document
+output:
+  html_document:
+    fig_caption: yes
+    fig_height: 10
+    fig_width: 15
+    keep_md: yes
 ---
 
 

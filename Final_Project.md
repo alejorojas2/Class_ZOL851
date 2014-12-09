@@ -1,8 +1,5 @@
----
-title: "Final Project QMEE"
-author: "Alejandro Rojas"
-output: html_document
----
+# Final Project QMEE
+Alejandro Rojas  
 
 
 File import into R maintaining the first row as header for the columns.
@@ -99,7 +96,7 @@ data.class(oomy_data$Year)
 ```
 
 Histogram representing the distribution of number of species found per year:
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+![](Final_Project_files/figure-html/unnamed-chunk-4-1.png) 
 
 Boxplots for number of species in each state, compiling the 6 fields per state
 
@@ -110,4 +107,4 @@ ggplot(data = oomy_data, aes(y = Number_of_Species, x = State)) +
   geom_boxplot(aes(fill=Year)) + labs(y = "Number of species") + facet_grid(Year ~ .)
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+![](Final_Project_files/figure-html/unnamed-chunk-5-1.png) 
