@@ -5,3 +5,20 @@ output: html_document
 ---
 
 
+File import into R maintaining the first row as header for the columns.
+```{r,echo=FALSE}
+setwd("~/Dropbox/Stats_Ecology-Evolution/Homeworks/Final_project/Final_Project_QMEE/")
+oomy_data <- read.csv("data_qmee.csv", header = T)
+head(oomy_data)
+```
+
+```{r}
+summary(oomy_data)
+length(oomy_data$State)
+```
+
+Transform year data into factor and data type is checked after transformation.
+```{r}
+oomy_data$Year <- factor(oomy_data$Year)
+data.class(oomy_data$Year)
+```
