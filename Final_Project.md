@@ -35,43 +35,43 @@ summary(oomy_data)
 
 ```
 ##      State        Field          Year      Number_of_isolates
-##  IASO   : 9   ARSO_1 :  1   Min.   :2011   Min.   :  1.00    
-##  MISO   : 9   ARSO2_1:  1   1st Qu.:2011   1st Qu.: 10.00    
-##  KSSO   : 7   ARSO2_2:  1   Median :2011   Median : 22.00    
-##  MISO2  : 7   ARSO2_3:  1   Mean   :2011   Mean   : 29.05    
-##  ARSO2  : 6   ARSO2_4:  1   3rd Qu.:2012   3rd Qu.: 37.00    
-##  ILSO   : 6   ARSO2_5:  1   Max.   :2012   Max.   :320.00    
-##  (Other):69   (Other):107                                    
+##  IASO   : 9   ARSO2_1:  1   Min.   :2011   Min.   :  1.00    
+##  MISO   : 9   ARSO2_2:  1   1st Qu.:2011   1st Qu.: 10.00    
+##  KSSO   : 7   ARSO2_3:  1   Median :2011   Median : 21.50    
+##  MISO2  : 7   ARSO2_4:  1   Mean   :2011   Mean   : 26.46    
+##  ARSO2  : 6   ARSO2_5:  1   3rd Qu.:2012   3rd Qu.: 37.00    
+##  ILSO   : 6   ARSO2_6:  1   Max.   :2012   Max.   :191.00    
+##  (Other):68   (Other):106                                    
 ##  Number_of_Species      Long              Lat        Sampling_date
 ##  Min.   : 1.000    Min.   :-100.82   Min.   :33.80   N/A    :10   
-##  1st Qu.: 5.000    1st Qu.: -96.63   1st Qu.:39.96   6-13-11: 8   
-##  Median : 8.000    Median : -93.53   Median :41.74   6-20-11: 7   
-##  Mean   : 7.841    Mean   : -92.26   Mean   :41.85   6-6-11 : 6   
+##  1st Qu.: 5.000    1st Qu.: -96.65   1st Qu.:39.96   6-13-11: 8   
+##  Median : 8.000    Median : -93.59   Median :41.76   6-20-11: 7   
+##  Mean   : 7.795    Mean   : -92.27   Mean   :41.92   6-6-11 : 6   
 ##  3rd Qu.:10.000    3rd Qu.: -88.25   3rd Qu.:44.07   5-30-12: 4   
 ##  Max.   :18.000    Max.   : -84.01   Max.   :47.96   5-31-12: 4   
-##                                                      (Other):74   
-##       OTU              Chao           chao_lci          chao_hci      
-##  Min.   :  1.00   Min.   :  1.00   Min.   :  0.000   Min.   :   0.00  
-##  1st Qu.:  8.00   1st Qu.: 13.00   1st Qu.:  8.778   1st Qu.:  40.73  
-##  Median : 13.00   Median : 29.00   Median : 17.477   Median :  78.16  
-##  Mean   : 14.59   Mean   : 60.71   Mean   : 31.208   Mean   : 153.36  
-##  3rd Qu.: 19.00   3rd Qu.: 60.00   3rd Qu.: 32.274   3rd Qu.: 163.18  
-##  Max.   :107.00   Max.   :981.20   Max.   :482.594   Max.   :2141.71  
-##                                                                       
+##                                                      (Other):73   
+##       OTU             Chao           chao_lci          chao_hci      
+##  Min.   : 1.00   Min.   :  1.00   Min.   :  0.000   Min.   :   0.00  
+##  1st Qu.: 7.75   1st Qu.: 12.83   1st Qu.:  8.709   1st Qu.:  40.73  
+##  Median :12.50   Median : 29.00   Median : 17.304   Median :  77.70  
+##  Mean   :13.77   Mean   : 52.49   Mean   : 27.178   Mean   : 135.60  
+##  3rd Qu.:18.25   3rd Qu.: 58.50   3rd Qu.: 30.057   3rd Qu.: 160.80  
+##  Max.   :57.00   Max.   :666.00   Max.   :366.598   Max.   :1236.55  
+##                                                                      
 ##     shannon       shannon_lci     shannon_hci    Precipitation   
 ##  Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   : 35.57  
-##  1st Qu.:1.712   1st Qu.:1.248   1st Qu.:2.161   1st Qu.: 64.92  
-##  Median :2.152   Median :1.767   Median :2.552   Median : 85.61  
-##  Mean   :2.133   Mean   :1.741   Mean   :2.526   Mean   : 89.64  
-##  3rd Qu.:2.633   3rd Qu.:2.283   3rd Qu.:2.993   3rd Qu.:115.72  
+##  1st Qu.:1.710   1st Qu.:1.248   1st Qu.:2.159   1st Qu.: 64.46  
+##  Median :2.149   Median :1.753   Median :2.528   Median : 85.42  
+##  Mean   :2.123   Mean   :1.729   Mean   :2.518   Mean   : 89.21  
+##  3rd Qu.:2.624   3rd Qu.:2.282   3rd Qu.:2.981   3rd Qu.:114.43  
 ##  Max.   :3.583   Max.   :3.356   Max.   :3.811   Max.   :203.62  
 ##                                                                  
 ##       Temp      
 ##  Min.   :13.61  
-##  1st Qu.:16.85  
+##  1st Qu.:16.84  
 ##  Median :18.22  
-##  Mean   :18.61  
-##  3rd Qu.:20.37  
+##  Mean   :18.56  
+##  3rd Qu.:20.33  
 ##  Max.   :24.97  
 ## 
 ```
@@ -81,7 +81,7 @@ length(oomy_data$State)
 ```
 
 ```
-## [1] 113
+## [1] 112
 ```
 
 Transform year data into factor and data type is checked after transformation.
@@ -101,8 +101,29 @@ Histogram representing the distribution of number of species found per year:
 Boxplots for number of species in each state, compiling the 6 fields per state
 
 ```r
-ggplot(data = oomy_data, aes(y = Number_of_Species, x = State)) +
-  geom_boxplot(aes(fill=Year)) + labs(y = "Number of species") + facet_grid(Year ~ .)
+#Boxplot for the number of species per state
+ggplot(data=oomy_data, aes(y=Number_of_Species, x=State)) +
+  geom_boxplot(aes(fill=Year)) + labs(y="Number of species") + facet_grid(Year ~ .)
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
+#Boxplot for the shannon diversity index per state
+ggplot(data=oomy_data, aes(y=shannon, x=State)) +
+  geom_boxplot(aes(fill=Year)) + labs(y="Shannon index") + facet_grid(Year ~ .)
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-5-2.png) 
+
+Plotting the temperature against the number of species observed, there is not a striking pattern that correlates the two factors.  
+![](Final_Project_files/figure-html/unnamed-chunk-6-1.png) ![](Final_Project_files/figure-html/unnamed-chunk-6-2.png) 
+
+However, precipitation seems to have a more visible pattern plotting this against the number of species for both years.
+
+```r
+plot(oomy_data$Precipitation, oomy_data$Number_of_Species, main = "Precipitation vs Number of species)", col = c("green","blue"), xlab = "Precipitation", ylab = "Number of species", pch = 16)
+legend(x = 180,y = 18, legend = c("2011","2012"), col = c("green","blue"), pch=16 )
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-7-1.png) 

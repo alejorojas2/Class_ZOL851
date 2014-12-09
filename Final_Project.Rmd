@@ -16,6 +16,7 @@ setwd("~/Dropbox/Stats_Ecology-Evolution/Homeworks/Final_project/Final_Project_Q
 library(ggplot2)
 oomy_data <- read.csv("data_qmee.csv", header = T)
 head(oomy_data)
+oomy_data <- oomy_data[-1,]
 ```
 
 ```{r}
@@ -31,12 +32,34 @@ data.class(oomy_data$Year)
 
 Histogram representing the distribution of number of species found per year:
 ```{r, echo=FALSE}
+#Histogram of number of species per year for the survey
 ggplot(data=oomy_data, aes(x=Number_of_Species)) +
   geom_histogram(aes(fill=Year), binwidth=2, colour="black") + labs(x="Number of species") + facet_grid(Year ~ .)
 ```
 
 Boxplots for number of species in each state, compiling the 6 fields per state
 ```{r}
-ggplot(data = oomy_data, aes(y = Number_of_Species, x = State)) +
-  geom_boxplot(aes(fill=Year)) + labs(y = "Number of species") + facet_grid(Year ~ .)
+#Boxplot for the number of species per state
+ggplot(data=oomy_data, aes(y=Number_of_Species, x=State)) +
+  geom_boxplot(aes(fill=Year)) + labs(y="Number of species") + facet_grid(Year ~ .)
+#Boxplot for the shannon diversity index per state
+ggplot(data=oomy_data, aes(y=shannon, x=State)) +
+  geom_boxplot(aes(fill=Year)) + labs(y="Shannon index") + facet_grid(Year ~ .)
+```
+
+Plotting the temperature against the number of species observed, there is not a striking pattern that correlates the two factors.  
+```{r, echo=FALSE}
+#Evaluation of the relation of temperature and number of species across years
+par(mfrow = c(1,1))
+ggplot(data=oomy_data, aes(x=Temp, y=Number_of_Species)) +
+  geom_jitter(aes(colour=Year), size=3) + labs(x="Temperature (ºC)", y="Number of species") 
+#Evaluation of the relation of temperature and shannon index across years
+ggplot(data=oomy_data, aes(x=Temp, y=shannon)) +
+  geom_jitter(aes(colour=Year), size=3) + labs(x="Temperature (ºC)", y="Shannon index") 
+```
+
+However, precipitation seems to have a more visible pattern plotting this against the number of species for both years.
+```{r}
+plot(oomy_data$Precipitation, oomy_data$Number_of_Species, main = "Precipitation vs Number of species)", col = c("green","blue"), xlab = "Precipitation", ylab = "Number of species", pch = 16)
+legend(x = 180,y = 18, legend = c("2011","2012"), col = c("green","blue"), pch=16 )
 ```
