@@ -5,7 +5,7 @@ output:
   html_document:
     fig_caption: yes
     fig_height: 10
-    fig_width: 15
+    fig_width: 12
     keep_md: yes
 ---
 
@@ -13,6 +13,7 @@ output:
 File import into R maintaining the first row as header for the columns.
 ```{r,echo=FALSE}
 setwd("~/Dropbox/Stats_Ecology-Evolution/Homeworks/Final_project/Final_Project_QMEE/")
+library(ggplot2)
 oomy_data <- read.csv("data_qmee.csv", header = T)
 head(oomy_data)
 ```
@@ -30,15 +31,12 @@ data.class(oomy_data$Year)
 
 Histogram representing the distribution of number of species found per year:
 ```{r, echo=FALSE}
-par(mfrow = c(2,1))
-hist(oomy_data$Number_of_Species[oomy_data$Year=="2011"], xlab = "Number of species", col = "green", main = "Species 2011")
-hist(oomy_data$Number_of_Species[oomy_data$Year=="2012"], xlab = "Number of species", col = "blue", main = "Species 2012")
+ggplot(data=oomy_data, aes(x=Number_of_Species)) +
+  geom_histogram(aes(fill=Year), binwidth=2, colour="black") + labs(x="Number of species") + facet_grid(Year ~ .)
 ```
 
 Boxplots for number of species in each state, compiling the 6 fields per state
 ```{r}
-par(mfrow = c(1,1))
-library(ggplot2)
 ggplot(data = oomy_data, aes(y = Number_of_Species, x = State)) +
   geom_boxplot(aes(fill=Year)) + labs(y = "Number of species") + facet_grid(Year ~ .)
 ```

@@ -101,8 +101,6 @@ Histogram representing the distribution of number of species found per year:
 Boxplots for number of species in each state, compiling the 6 fields per state
 
 ```r
-par(mfrow = c(1,1))
-library(ggplot2)
 ggplot(data = oomy_data, aes(y = Number_of_Species, x = State)) +
   geom_boxplot(aes(fill=Year)) + labs(y = "Number of species") + facet_grid(Year ~ .)
 ```
