@@ -10,56 +10,100 @@ output:
 ---
 
 
-File import into R maintaining the first row as header for the columns.
-```{r,echo=FALSE}
+File import into R maintaining the first row as header for the columns.  Also the samples from Arkansas 2011 were removed since this samples only came form a single field, not complying with the same sampling parameters used for the other samples.
+```{r,echo=FALSE,message=FALSE}
 setwd("~/Dropbox/Stats_Ecology-Evolution/Homeworks/Final_project/Final_Project_QMEE/")
 library(ggplot2)
+library(stargazer)
+library(car)
+library(arm)
+require(MASS) # for glm.nb
+require(bbmle)
+require(emdbook) # for the dzin
+
 oomy_data <- read.csv("data_qmee.csv", header = T)
-head(oomy_data)
 oomy_data <- oomy_data[-1,]
 ```
 
 ```{r}
-summary(oomy_data)
 length(oomy_data$State)
+stargazer(oomy_data, summary=TRUE, type="text")
 ```
 
 Transform year data into factor and data type is checked after transformation.
-```{r}
+```{r, echo=FALSE}
 oomy_data$Year <- factor(oomy_data$Year)
-data.class(oomy_data$Year)
+oomy_data$ct.temp <- scale(x=oomy_data$Temp, center=TRUE, scale=FALSE)
+oomy_data$ct.lat <- scale(x=oomy_data$Lat, center=TRUE, scale=FALSE)
+oomy_data$ct.precp <- scale(x=oomy_data$Precipitation, center=TRUE, scale=FALSE)
 ```
 
 Histogram representing the distribution of number of species found per year:
 ```{r, echo=FALSE}
 #Histogram of number of species per year for the survey
-ggplot(data=oomy_data, aes(x=Number_of_Species)) +
-  geom_histogram(aes(fill=Year), binwidth=2, colour="black") + labs(x="Number of species") + facet_grid(Year ~ .)
+ggplot(data=oomy_data, aes(x=OTU)) +
+  geom_histogram(aes(fill=Year), binwidth=2, colour="black") + labs(x="OTU") + facet_grid(Year ~ .)
 ```
 
 Boxplots for number of species in each state, compiling the 6 fields per state
 ```{r}
 #Boxplot for the number of species per state
-ggplot(data=oomy_data, aes(y=Number_of_Species, x=State)) +
-  geom_boxplot(aes(fill=Year)) + labs(y="Number of species") + facet_grid(Year ~ .)
+ggplot(data=oomy_data, aes(y=OTU, x=State)) +
+  geom_boxplot(aes(fill=Year)) + labs(y="OTU") + facet_grid(Year ~ .)
 #Boxplot for the shannon diversity index per state
 ggplot(data=oomy_data, aes(y=shannon, x=State)) +
   geom_boxplot(aes(fill=Year)) + labs(y="Shannon index") + facet_grid(Year ~ .)
 ```
 
-Plotting the temperature against the number of species observed, there is not a striking pattern that correlates the two factors.  
+Plotting the temperature against the number of species observed or using shannon diversity index, there was not a striking pattern that correlates the two factors.  
 ```{r, echo=FALSE}
 #Evaluation of the relation of temperature and number of species across years
 par(mfrow = c(1,1))
-ggplot(data=oomy_data, aes(x=Temp, y=Number_of_Species)) +
-  geom_jitter(aes(colour=Year), size=3) + labs(x="Temperature (ºC)", y="Number of species") 
+ggplot(data=oomy_data, aes(x=ct.temp, y=OTU)) + geom_point(colour="Black", size=4) +
+  geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Temperature (ºC)", y="OTU") 
 #Evaluation of the relation of temperature and shannon index across years
-ggplot(data=oomy_data, aes(x=Temp, y=shannon)) +
-  geom_jitter(aes(colour=Year), size=3) + labs(x="Temperature (ºC)", y="Shannon index") 
+ggplot(data=oomy_data, aes(x=ct.temp, y=shannon)) + geom_jitter(colour="Black", size=4) +
+  geom_jitter(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Temperature (ºC)", y="Shannon index") 
 ```
 
 However, precipitation seems to have a more visible pattern plotting this against the number of species for both years.
 ```{r}
-plot(oomy_data$Precipitation, oomy_data$Number_of_Species, main = "Precipitation vs Number of species)", col = c("green","blue"), xlab = "Precipitation", ylab = "Number of species", pch = 16)
-legend(x = 180,y = 18, legend = c("2011","2012"), col = c("green","blue"), pch=16 )
+#Evaluation of the effect of precipitation on the number of species
+ggplot(data=oomy_data, aes(x=ct.precp, y=OTU)) +
+  geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Precipitation (mm)", y="OTU")                                                                     
+
+#Evaluation of the effect of precipitation on the Shannon diversity index
+ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) + 
+   geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Precipitation (mm)", y="Shannon index")
 ```
+
+
+As part of the model selection, different linear models were set, using diversity (Shannon index) as response variable, using temperature, latitude, precipitation as predictor variables. 
+```{r}
+reg.null <- lm(shannon ~ 1, data=oomy_data)
+reg.lat <- lm(shannon ~ ct.lat, data=oomy_data)
+reg.temp <- lm(shannon ~ ct.temp, data=oomy_data)
+reg.prec <- lm(shannon ~ ct.precp, data=oomy_data)
+reg.lat.temp <- lm(shannon ~ ct.lat + ct.temp, data=oomy_data)
+reg.lat.prec <- lm(shannon ~ ct.lat + ct.precp, data=oomy_data)
+reg.temp.prec <- lm(shannon ~ ct.precp + ct.precp, data=oomy_data)
+reg.latXtemp <- lm(shannon ~ ct.lat*ct.temp, data=oomy_data)
+reg.latXprec <- lm(shannon ~ ct.lat*ct.precp, data=oomy_data)
+reg.tempXprec <- lm(shannon ~ ct.precp*ct.precp, data=oomy_data)
+
+reg2.null <- lm(OTU ~ 1, data=oomy_data)
+reg2.lat <- lm(OTU ~ ct.lat, data=oomy_data)
+reg2.temp <- lm(OTU ~ ct.temp, data=oomy_data)
+reg2.prec <- lm(OTU ~ ct.precp, data=oomy_data)
+reg2.lat.temp <- lm(OTU ~ ct.lat + ct.temp, data=oomy_data)
+reg2.lat.prec <- lm(OTU ~ ct.lat + ct.precp, data=oomy_data)
+reg2.temp.prec <- lm(OTU ~ ct.precp + ct.precp, data=oomy_data)
+reg2.latXtemp <- lm(OTU ~ ct.lat*ct.temp, data=oomy_data)
+reg2.latXprec <- lm(OTU ~ ct.lat*ct.precp, data=oomy_data)
+reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
+
+models.OTU <- c(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec)
+
+AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
+AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
+
