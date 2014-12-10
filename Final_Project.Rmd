@@ -78,7 +78,7 @@ ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) +
 ```
 
 
-As part of the model selection, different linear models were set, using diversity (Shannon index) as response variable, using temperature, latitude, precipitation as predictor variables. 
+As part of the model selection, different linear models were set, using diversity (Shannon index and OTU) as response variable, using temperature, latitude, precipitation as predictor variables. 
 ```{r}
 reg.null <- lm(shannon ~ 1, data=oomy_data)
 reg.lat <- lm(shannon ~ ct.lat, data=oomy_data)
@@ -104,6 +104,7 @@ reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
 
 models.OTU <- c(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec)
 
-AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
-AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
+aic.shannon <- AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
+
+aic.OTU <- AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
 

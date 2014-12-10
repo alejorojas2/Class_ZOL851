@@ -72,7 +72,7 @@ However, precipitation seems to have a more visible pattern plotting this agains
 ```r
 #Evaluation of the effect of precipitation on the number of species
 ggplot(data=oomy_data, aes(x=ct.precp, y=OTU)) +
-  geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + labs(x="Precipitation (mm)", y="OTU")                                                                     
+  geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Precipitation (mm)", y="OTU")                                                                     
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-7-1.png) 
@@ -80,7 +80,40 @@ ggplot(data=oomy_data, aes(x=ct.precp, y=OTU)) +
 ```r
 #Evaluation of the effect of precipitation on the Shannon diversity index
 ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) + 
-   geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + labs(x="Precipitation (mm)", y="Shannon index")
+   geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Precipitation (mm)", y="Shannon index")
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-7-2.png) 
+
+
+As part of the model selection, different linear models were set, using diversity (Shannon index and OTU) as response variable, using temperature, latitude, precipitation as predictor variables. 
+
+```r
+reg.null <- lm(shannon ~ 1, data=oomy_data)
+reg.lat <- lm(shannon ~ ct.lat, data=oomy_data)
+reg.temp <- lm(shannon ~ ct.temp, data=oomy_data)
+reg.prec <- lm(shannon ~ ct.precp, data=oomy_data)
+reg.lat.temp <- lm(shannon ~ ct.lat + ct.temp, data=oomy_data)
+reg.lat.prec <- lm(shannon ~ ct.lat + ct.precp, data=oomy_data)
+reg.temp.prec <- lm(shannon ~ ct.precp + ct.precp, data=oomy_data)
+reg.latXtemp <- lm(shannon ~ ct.lat*ct.temp, data=oomy_data)
+reg.latXprec <- lm(shannon ~ ct.lat*ct.precp, data=oomy_data)
+reg.tempXprec <- lm(shannon ~ ct.precp*ct.precp, data=oomy_data)
+
+reg2.null <- lm(OTU ~ 1, data=oomy_data)
+reg2.lat <- lm(OTU ~ ct.lat, data=oomy_data)
+reg2.temp <- lm(OTU ~ ct.temp, data=oomy_data)
+reg2.prec <- lm(OTU ~ ct.precp, data=oomy_data)
+reg2.lat.temp <- lm(OTU ~ ct.lat + ct.temp, data=oomy_data)
+reg2.lat.prec <- lm(OTU ~ ct.lat + ct.precp, data=oomy_data)
+reg2.temp.prec <- lm(OTU ~ ct.precp + ct.precp, data=oomy_data)
+reg2.latXtemp <- lm(OTU ~ ct.lat*ct.temp, data=oomy_data)
+reg2.latXprec <- lm(OTU ~ ct.lat*ct.precp, data=oomy_data)
+reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
+
+models.OTU <- c(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec)
+
+aic.shannon <- AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
+
+aic.OTU <- AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
+```
