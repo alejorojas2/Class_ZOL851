@@ -396,3 +396,58 @@ plot(reg2.latXprec)
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-18-2.png) 
+
+
+**residuals resampling for model based on Shannon ~ lat + temp**
+
+
+```r
+resid.lm.boot <- function(mod.obj=reg.lat.temp, dat=oomy_data) {
+  resids=resid(mod.obj)
+  fit.val=fitted(mod.obj)
+  mod.matr <- model.matrix(mod.obj)
+  #generating new values for each y[i] (vector Y), by adding the bootstrapped residuals to the fitted model.
+  Y <- fit.val + sample(resids,length(resids), replace=T)
+  model.boot <- lm( Y ~ 0 + mod.matr, data=dat) # refit model with new Y values
+  coef(model.boot) # Extract the co-efficients
+  }
+
+N.boot = 5000
+residual.boot.N <- t(replicate(N.boot, resid.lm.boot()))
+colnames(residual.boot.N) <- c("Intercept","Latitude","Temperature")
+```
+
+**Histograms of coefficients after bootstrap residual resampling for shannon ~ lat + temp**
+
+
+![](Final_Project_files/figure-html/unnamed-chunk-21-1.png) 
+
+**residuals resampling for model based on OTU ~ lat + prec + lat*prec**
+
+
+```r
+resid.lm.boot2 <- function(mod.obj=reg2.latXprec, dat=oomy_data) {
+  resids=resid(mod.obj)
+  fit.val=fitted(mod.obj)
+  mod.matr <- model.matrix(mod.obj)
+  #generating new values for each y[i] (vector Y), by adding the bootstrapped residuals to the fitted model.
+  Y <- fit.val + sample(resids,length(resids), replace=T)
+  model.boot <- lm( Y ~ 0 + mod.matr, data=dat) # refit model with new Y values
+  coef(model.boot) # Extract the co-efficients
+  }
+
+N.boot2 = 5000
+residual.boot.N2 <- t(replicate(N.boot2, resid.lm.boot2()))
+colnames(residual.boot.N2) <- c("Intercept","Latitude","Precipitation","Lat:Precp")
+```
+
+**Histograms of coefficients after bootstrap residual resampling for OTU ~ lat + prec + lat*prec**
+
+
+
+```r
+par(mfcol=c(2,2), mar=c(4,4,0.5,0.5), oma=c(1.5,2,1,1))
+MultipleHistograms2()
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-24-1.png) 

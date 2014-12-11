@@ -213,3 +213,123 @@ plot(reg.lat.temp)
 #OTU number model
 plot(reg2.latXprec)
 ```
+
+
+**residuals resampling for model based on Shannon ~ lat + temp**
+
+```{r}
+resid.lm.boot <- function(mod.obj=reg.lat.temp, dat=oomy_data) {
+  resids=resid(mod.obj)
+  fit.val=fitted(mod.obj)
+  mod.matr <- model.matrix(mod.obj)
+  #generating new values for each y[i] (vector Y), by adding the bootstrapped residuals to the fitted model.
+  Y <- fit.val + sample(resids,length(resids), replace=T)
+  model.boot <- lm( Y ~ 0 + mod.matr, data=dat) # refit model with new Y values
+  coef(model.boot) # Extract the co-efficients
+  }
+
+N.boot = 5000
+residual.boot.N <- t(replicate(N.boot, resid.lm.boot()))
+colnames(residual.boot.N) <- c("Intercept","Latitude","Temperature")
+```
+
+**Histograms of coefficients after bootstrap residual resampling for shannon ~ lat + temp**
+```{r, echo=FALSE}
+MultipleHistograms <- function(X=residual.boot.N){
+    for (i in 1:ncol(X)) {
+      hist(X[,i], freq=F,
+          main = colnames(X)[i],
+          xlab = colnames(X)[i])}
+    }
+```
+
+```{r, echo=FALSE}
+par(mfcol=c(2,2), mar=c(4,4,0.5,0.5), oma=c(1.5,2,1,1))
+MultipleHistograms()
+```
+
+**residuals resampling for model based on OTU ~ lat + prec + lat*prec**
+
+```{r}
+resid.lm.boot2 <- function(mod.obj=reg2.latXprec, dat=oomy_data) {
+  resids=resid(mod.obj)
+  fit.val=fitted(mod.obj)
+  mod.matr <- model.matrix(mod.obj)
+  #generating new values for each y[i] (vector Y), by adding the bootstrapped residuals to the fitted model.
+  Y <- fit.val + sample(resids,length(resids), replace=T)
+  model.boot <- lm( Y ~ 0 + mod.matr, data=dat) # refit model with new Y values
+  coef(model.boot) # Extract the co-efficients
+  }
+
+N.boot2 = 5000
+residual.boot.N2 <- t(replicate(N.boot2, resid.lm.boot2()))
+colnames(residual.boot.N2) <- c("Intercept","Latitude","Precipitation","Lat:Precp")
+```
+
+**Histograms of coefficients after bootstrap residual resampling for OTU ~ lat + prec + lat*prec**
+```{r, echo=FALSE}
+MultipleHistograms2 <- function(X=residual.boot.N2){
+    for (i in 1:ncol(X)) {
+      hist(X[,i], freq=F,
+          main = colnames(X)[i],
+          xlab = colnames(X)[i])}
+    }
+```
+
+```{r}
+par(mfcol=c(2,2), mar=c(4,4,0.5,0.5), oma=c(1.5,2,1,1))
+MultipleHistograms2()
+```
+
+```{r, echo=FALSE}
+#Power analysis for Shannon model
+#Global Parameter values
+a = coef(reg.lat.temp)[1] 
+#The intercept now becomes the group mean for the "base" level
+b <- seq(from=0, to=1.0,by=0.1) 
+#This now becomes the treatment contrast
+std_dev = sd(oomy_data$shannon)
+sample_size <- seq(from=10,to=300,by=10) 
+#sample size now represents the "within group sample size"
+
+# use expand grid to get all combinations of b and sample_size
+b_N <- expand.grid(b, sample_size)  
+#may be worth looking at b_N to see what is being stored.
+dim(b_N)
+colnames(b_N) <- c("b", "sample_size") 
+
+#Here is the function to generate the simulation and fit the model given the simulated data.
+SimulatePower <- function(sample_size, b_b, a, std_dev){
+  x <- rnorm(sample_size, mean=0, sd=1)
+  y_det <- a + b_b*x
+  y_sim <- rnorm(sample_size, mean=y_det, sd=std_dev)
+  lm1 <- lm(y_sim~x)
+  pval <- coef(summary(lm1))[2,4]
+ }
+
+# The basic approach works like this. This goes through all 
+#combinations of sample_size and b (in b_N) and runs the SimulationPower().
+p_values <- mapply(SimulatePower, 
+    sample_size  = b_N$sample_size, b_b = b_N$b, 
+    MoreArgs=list(a=a, std_dev=std_dev)) 
+# And if we want to repeat this, we can do it easily with replicate    
+rep_p <- replicate(1000, mapply(SimulatePower, 
+    sample_size  = b_N$sample_size, b_b = b_N$b, 
+    MoreArgs=list(a=a, std_dev=std_dev)) ) 
+# Each row represents a distinct combination of sample size and slope. 
+#Each column an iteration of that simulation
+dim(rep_p)
+# Now we can compute the power. We use the apply like 
+#funcion to get determine the fraction of p-values less than 0.05
+power_lev <- apply(rep_p, MARGIN=1, 
+    function(x) length(x[x<=0.05])/length(x)) # how many p-values are less than 0.05
+
+# The only problem with this approach is that you need to make the matrix of p-values,
+#which are otherwise just stored as a single vector
+grid_matrix <- matrix(data=power_lev, nrow=length(b), ncol=length(sample_size))
+
+par(mar = c(5, 6, 6, 5))
+filled.contour(z=grid_matrix, y=sample_size, x=b, 
+    xlim=c(min(b),max(b)), ylim=c(min(sample_size), max(sample_size)), 
+    ylab="Sample Size", xlab="slope", color = topo.colors)
+```
