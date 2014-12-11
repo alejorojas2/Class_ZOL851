@@ -451,3 +451,27 @@ MultipleHistograms2()
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-24-1.png) 
+
+Power analysis for model shannon ~ lat + temp
+
+```
+## [1] 110   2
+```
+
+```
+## [1]  110 1000
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-25-1.png) 
+
+Power analysis for model OTU ~ lat + prec + lat*prec
+
+```
+## [1] 110   2
+```
+
+```
+## [1]  110 1000
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-26-1.png) 
