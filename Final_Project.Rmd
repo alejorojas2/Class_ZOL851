@@ -77,6 +77,16 @@ ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) +
    geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Precipitation (mm)", y="Shannon index")
 ```
 
+Evaluation of latitude in realtion to species diversity, in order to explore the raltionships, and also test a ecological perspective.
+```{r, echo=FALSE}
+#Evaluation of the relation of latitude and number of species across years
+par(mfrow = c(1,1))
+ggplot(data=oomy_data, aes(x=ct.lat, y=OTU)) + geom_point(colour="Black", size=4) +
+  geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Latitude", y="OTU") 
+#Evaluation of the relation of temperature and shannon index across years
+ggplot(data=oomy_data, aes(x=ct.lat, y=shannon)) + geom_jitter(colour="Black", size=4) +
+  geom_jitter(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Latitude", y="Shannon index") 
+```
 
 As part of the model selection, different linear models were set, using diversity (Shannon index and OTU) as response variable, using temperature, latitude, precipitation as predictor variables. 
 ```{r}
@@ -101,10 +111,34 @@ reg2.temp.prec <- lm(OTU ~ ct.precp + ct.precp, data=oomy_data)
 reg2.latXtemp <- lm(OTU ~ ct.lat*ct.temp, data=oomy_data)
 reg2.latXprec <- lm(OTU ~ ct.lat*ct.precp, data=oomy_data)
 reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
+```
 
-models.OTU <- c(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec)
-
+```{r, echo=FALSE}
 aic.shannon <- AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
 
 aic.OTU <- AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
+```
 
+```{r}
+#AIC selection of model using OTU as response
+aic.shannon
+```
+
+```{r}
+#AIC selection of model using OTU as response
+aic.OTU
+```
+
+```{r, echo=FALSE}
+#Selection of best models
+models.shannon <- list(reg.lat,reg.lat.temp,reg.latXtemp,reg.latXprec) #Using shannon index
+models.OTU <- list(reg2.latXprec,reg2.temp,reg2.lat.prec) #Using OTU
+
+AIC.shannon <- AIC(reg.lat,reg.lat.temp,reg.latXtemp,reg.latXprec)
+log.lik.shannon <- lapply(models.shannon,logLik)
+
+stargazer(AIC.shannon, type="text", summary = FALSE)
+#stargazer(log.lik.shannon, type="text", summary = FALSE)
+
+AIC.otu <- AIC(reg2.latXprec,reg2.temp,reg2.lat.prec)
+log.lik.OTU <- lapply(models.OTU, logLik)

@@ -85,6 +85,8 @@ ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) +
 
 ![](Final_Project_files/figure-html/unnamed-chunk-7-2.png) 
 
+Evaluation of latitude in realtion to species diversity, in order to explore the raltionships, and also test a ecological perspective.
+![](Final_Project_files/figure-html/unnamed-chunk-8-1.png) ![](Final_Project_files/figure-html/unnamed-chunk-8-2.png) 
 
 As part of the model selection, different linear models were set, using diversity (Shannon index and OTU) as response variable, using temperature, latitude, precipitation as predictor variables. 
 
@@ -110,10 +112,59 @@ reg2.temp.prec <- lm(OTU ~ ct.precp + ct.precp, data=oomy_data)
 reg2.latXtemp <- lm(OTU ~ ct.lat*ct.temp, data=oomy_data)
 reg2.latXprec <- lm(OTU ~ ct.lat*ct.precp, data=oomy_data)
 reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
+```
 
-models.OTU <- c(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec)
 
-aic.shannon <- AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
 
-aic.OTU <- AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
+
+```r
+#AIC selection of model using OTU as response
+aic.shannon
+```
+
+```
+##               dAIC df weight
+## reg.lat       0.0  3  0.3867
+## reg.temp      1.8  3  0.1560
+## reg.lat.prec  2.0  4  0.1445
+## reg.lat.temp  2.0  4  0.1423
+## reg.latXprec  3.6  5  0.0635
+## reg.latXtemp  3.9  5  0.0542
+## reg.null      5.5  2  0.0246
+## reg.prec      7.4  3  0.0094
+## reg.temp.prec 7.4  3  0.0094
+## reg.tempXprec 7.4  3  0.0094
+```
+
+
+```r
+#AIC selection of model using OTU as response
+aic.OTU
+```
+
+```
+##                dAIC df weight
+## reg2.latXprec  0.0  5  0.153 
+## reg2.temp      0.1  3  0.144 
+## reg2.lat.prec  0.2  4  0.140 
+## reg2.prec      0.6  3  0.114 
+## reg2.temp.prec 0.6  3  0.114 
+## reg2.tempXprec 0.6  3  0.114 
+## reg2.lat       1.2  3  0.083 
+## reg2.null      1.8  2  0.061 
+## reg2.lat.temp  2.1  4  0.053 
+## reg2.latXtemp  3.7  5  0.024
+```
+
+
+```
+## 
+## =======================
+##              df   AIC  
+## -----------------------
+## reg.lat      3  227.981
+## reg.lat.temp 4  229.981
+## reg.latXtemp 5  231.911
+## reg.latXprec 5  231.594
+## -----------------------
 ```
