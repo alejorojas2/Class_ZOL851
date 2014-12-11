@@ -357,3 +357,42 @@ acf(resid(reg2.latXprec))
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-16-2.png) 
+
+Evaluation VIF terms for best fitted complex models
+
+```r
+#Shannon diversity model
+vif(reg.lat.temp)
+```
+
+```
+##   ct.lat  ct.temp 
+## 4.210666 4.210666
+```
+
+```r
+#OTU number model
+vif(reg2.latXprec)
+```
+
+```
+##          ct.lat        ct.precp ct.lat:ct.precp 
+##        1.327676        1.188072        1.534181
+```
+
+Plotting of diagnostic plots for best fitted complex models
+
+```r
+par(mfrow = c(2,2))
+#Shannon diversity model
+plot(reg.lat.temp)
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-18-1.png) 
+
+```r
+#OTU number model
+plot(reg2.latXprec)
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-18-2.png) 

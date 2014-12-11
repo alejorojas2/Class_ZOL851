@@ -195,3 +195,21 @@ acf(resid(reg2.lat.prec))
 acf(resid(reg2.latXprec))
 ```
 
+Evaluation VIF terms for best fitted complex models
+```{r}
+#Shannon diversity model
+vif(reg.lat.temp)
+
+#OTU number model
+vif(reg2.latXprec)
+```
+
+Plotting of diagnostic plots for best fitted complex models
+```{r,results='hide'}
+par(mfrow = c(2,2))
+#Shannon diversity model
+plot(reg.lat.temp)
+
+#OTU number model
+plot(reg2.latXprec)
+```
