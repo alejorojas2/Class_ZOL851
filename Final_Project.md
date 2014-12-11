@@ -327,35 +327,10 @@ sapply(models.shannon,coefplot)
 
 ![](Final_Project_files/figure-html/unnamed-chunk-15-1.png) 
 
-```
-## [[1]]
-## NULL
-## 
-## [[2]]
-## NULL
-## 
-## [[3]]
-## NULL
-## 
-## [[4]]
-## NULL
-```
-
 ```r
 #Coefficient plots for OTU number
 par(mfrow = c(2,2))
 sapply(models.OTU,coefplot)
-```
-
-```
-## [[1]]
-## NULL
-## 
-## [[2]]
-## NULL
-## 
-## [[3]]
-## NULL
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-15-2.png) 

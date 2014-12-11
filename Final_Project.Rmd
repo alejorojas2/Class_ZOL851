@@ -169,7 +169,7 @@ stargazer(models.OTU, type="text", digits=3, omit.stat="f", omit.table.layout="n
 ```
 
 Evaluation of coefficient plots for shannon diversity index and OTU number.
-```{r}
+```{r, message=FALSE,results='hide'}
 #Coefficient plots for Shannon diversity index
 par(mfrow = c(2,2))
 sapply(models.shannon,coefplot)
@@ -194,3 +194,4 @@ acf(resid(reg2.temp))
 acf(resid(reg2.lat.prec))
 acf(resid(reg2.latXprec))
 ```
+
