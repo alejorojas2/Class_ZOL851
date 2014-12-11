@@ -475,3 +475,50 @@ Power analysis for model OTU ~ lat + prec + lat*prec
 ```
 
 ![](Final_Project_files/figure-html/unnamed-chunk-26-1.png) 
+
+
+```r
+#Mixed models
+M.1 <- gls(shannon ~ ct.lat + ct.temp + Year, data=oomy_data, correlation = corCompSymm(form=~Year))
+M.2 <- gls(OTU ~ ct.lat*ct.precp + Year, data=oomy_data, correlation = corCompSymm(form=~Year))
+```
+
+
+```r
+stargazer(M.1,M.2, type="text")
+```
+
+```
+## 
+## ================================================
+##                         Dependent variable:     
+##                     ----------------------------
+##                        shannon          OTU     
+##                          (1)            (2)     
+## ------------------------------------------------
+## ct.lat                  0.068          0.138    
+##                        (0.055)        (0.311)   
+##                                                 
+## ct.temp                 0.017                   
+##                        (0.073)                  
+##                                                 
+## ct.precp                              -0.005    
+##                                       (0.042)   
+##                                                 
+## Year2012                -0.060        -2.649    
+##                        (0.181)        (2.589)   
+##                                                 
+## ct.lat:ct.precp                       -0.015    
+##                                       (0.010)   
+##                                                 
+## Constant               2.152***      15.115***  
+##                        (0.108)        (1.494)   
+##                                                 
+## ------------------------------------------------
+## Observations             112            112     
+## Log Likelihood         -118.633      -401.557   
+## Akaike Inf. Crit.      249.266        817.113   
+## Bayesian Inf. Crit.    265.359        835.823   
+## ================================================
+## Note:                *p<0.1; **p<0.05; ***p<0.01
+```

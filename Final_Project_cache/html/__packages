@@ -1,0 +1,16 @@
+base
+ggplot2
+stargazer
+car
+MASS
+Matrix
+Rcpp
+lme4
+arm
+lattice
+colorspace
+effects
+bbmle
+plyr
+emdbook
+nlme

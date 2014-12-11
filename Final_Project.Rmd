@@ -22,6 +22,7 @@ require(MASS) # for glm.nb
 require(bbmle)
 require(emdbook) # for the dzin
 require(lme4)
+library(nlme)
 source("~/Dropbox//Stats_Ecology-Evolution/Homeworks/Hw-2/PartialR2_WP2012_ID.R")
 
 oomy_data <- read.csv("data_qmee.csv", header = T)
@@ -282,7 +283,7 @@ MultipleHistograms2()
 ```
 
 Power analysis for model shannon ~ lat + temp
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 #Power analysis for Shannon model
 #Global Parameter values
 a = coef(reg.lat.temp)[1] 
@@ -336,7 +337,7 @@ filled.contour(z=grid_matrix, y=sample_size, x=b,
 ```
 
 Power analysis for model OTU ~ lat + prec + lat*prec
-```{r, echo=FALSE}
+```{r, echo=FALSE, cache=TRUE}
 #Power analysis for Shannon model
 #Global Parameter values
 a = coef(reg2.latXprec)[1] 
@@ -387,4 +388,14 @@ par(mar = c(5, 6, 6, 5))
 filled.contour(z=grid_matrix, y=sample_size, x=b, 
     xlim=c(min(b),max(b)), ylim=c(min(sample_size), max(sample_size)), 
     ylab="Sample Size", xlab="slope", color = topo.colors)
+```
+
+```{r}
+#Mixed models
+M.1 <- gls(shannon ~ ct.lat + ct.temp + Year, data=oomy_data, correlation = corCompSymm(form=~Year))
+M.2 <- gls(OTU ~ ct.lat*ct.precp + Year, data=oomy_data, correlation = corCompSymm(form=~Year))
+```
+
+```{r, results='markup'}
+stargazer(M.1,M.2, type="text")
 ```
