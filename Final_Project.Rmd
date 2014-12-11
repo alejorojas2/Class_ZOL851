@@ -17,9 +17,12 @@ library(ggplot2)
 library(stargazer)
 library(car)
 library(arm)
+library(effects)
 require(MASS) # for glm.nb
 require(bbmle)
 require(emdbook) # for the dzin
+require(lme4)
+source("~/Dropbox//Stats_Ecology-Evolution/Homeworks/Hw-2/PartialR2_WP2012_ID.R")
 
 oomy_data <- read.csv("data_qmee.csv", header = T)
 oomy_data <- oomy_data[-1,]
@@ -45,7 +48,7 @@ ggplot(data=oomy_data, aes(x=OTU)) +
   geom_histogram(aes(fill=Year), binwidth=2, colour="black") + labs(x="OTU") + facet_grid(Year ~ .)
 ```
 
-Boxplots for number of species in each state, compiling the 6 fields per state
+Box plots for number of species in each state, compiling the 6 fields per state
 ```{r}
 #Boxplot for the number of species per state
 ggplot(data=oomy_data, aes(y=OTU, x=State)) +
@@ -77,7 +80,7 @@ ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) +
    geom_point(colour="Black", size=4) + geom_point(aes(colour=Year), size=3) + stat_smooth(method=lm, aes(fill=Year)) + labs(x="Precipitation (mm)", y="Shannon index")
 ```
 
-Evaluation of latitude in realtion to species diversity, in order to explore the raltionships, and also test a ecological perspective.
+Evaluation of latitude in relation to species diversity, in order to explore the relationships, and also test a ecological perspective.
 ```{r, echo=FALSE}
 #Evaluation of the relation of latitude and number of species across years
 par(mfrow = c(1,1))
@@ -113,17 +116,22 @@ reg2.latXprec <- lm(OTU ~ ct.lat*ct.precp, data=oomy_data)
 reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
 ```
 
+
 ```{r, echo=FALSE}
+#Evaluation of all the models developed using Shannon as response
 aic.shannon <- AICtab(reg.null,reg.lat,reg.temp,reg.prec,reg.lat.temp,reg.lat.prec,reg.temp.prec,reg.latXtemp,reg.latXprec,reg.tempXprec, weights=TRUE)
 
+#Evaluation of all the models developed using OTUs as response
 aic.OTU <- AICtab(reg2.null,reg2.lat,reg2.temp,reg2.prec,reg2.lat.temp,reg2.lat.prec,reg2.temp.prec,reg2.latXtemp,reg2.latXprec,reg2.tempXprec, weights=TRUE)
 ```
 
+All the models were evaluated with delta AIC to determine the best fitting model using Shannon diversity index as a response variable.
 ```{r}
 #AIC selection of model using OTU as response
 aic.shannon
 ```
 
+All the models were evaluated with delta AIC to determine the best fitting model using OTU number as a response variable.
 ```{r}
 #AIC selection of model using OTU as response
 aic.OTU
@@ -135,10 +143,54 @@ models.shannon <- list(reg.lat,reg.lat.temp,reg.latXtemp,reg.latXprec) #Using sh
 models.OTU <- list(reg2.latXprec,reg2.temp,reg2.lat.prec) #Using OTU
 
 AIC.shannon <- AIC(reg.lat,reg.lat.temp,reg.latXtemp,reg.latXprec)
-log.lik.shannon <- lapply(models.shannon,logLik)
-
-stargazer(AIC.shannon, type="text", summary = FALSE)
-#stargazer(log.lik.shannon, type="text", summary = FALSE)
+log.lik.shannon <- sapply(models.shannon,logLik,USE.NAMES=TRUE)
 
 AIC.otu <- AIC(reg2.latXprec,reg2.temp,reg2.lat.prec)
-log.lik.OTU <- lapply(models.OTU, logLik)
+log.lik.OTU <- lapply(models.OTU, logLik, USE.NAMES=TRUE)
+```
+
+
+The best fitting models were selected based on the delta AIC and other parameters were evaluated to confirm the selection of these models for both responses: Shannon diversity index and OTU number.
+```{r}
+#AIC, logLik and PRsq values for model using shannon
+stargazer(AIC.shannon, type="text", summary = FALSE)
+log.lik.shannon
+sapply(models.shannon,PRsq)
+#Summary for models using Shannon
+stargazer(models.shannon, type="text", digits=3, omit.stat="f", omit.table.layout="n")
+
+#AIC, logLik and PRsq values for models using OTU
+stargazer(AIC.otu, type="text", summary = FALSE)
+log.lik.OTU
+sapply(models.OTU,PRsq)
+
+#Summary for models usig OTU
+stargazer(models.OTU, type="text", digits=3, omit.stat="f", omit.table.layout="n")
+```
+
+Evaluation of coefficient plots for shannon diversity index and OTU number.
+```{r}
+#Coefficient plots for Shannon diversity index
+par(mfrow = c(2,2))
+sapply(models.shannon,coefplot)
+
+#Coefficient plots for OTU number
+par(mfrow = c(2,2))
+sapply(models.OTU,coefplot)
+```
+
+Evaluation of ACF on the residuals for the different models for both responses
+```{r}
+#ACF for models using Shannon
+par(mfrow = c(2,2))
+acf(resid(reg.lat))
+acf(resid(reg.lat.temp))
+acf(resid(reg.latXtemp))
+acf(resid(reg.latXprec))
+
+#ACF for models using Shannon
+par(mfrow = c(2,2))
+acf(resid(reg2.temp))
+acf(resid(reg2.lat.prec))
+acf(resid(reg2.latXprec))
+```

@@ -46,7 +46,7 @@ Transform year data into factor and data type is checked after transformation.
 Histogram representing the distribution of number of species found per year:
 ![](Final_Project_files/figure-html/unnamed-chunk-4-1.png) 
 
-Boxplots for number of species in each state, compiling the 6 fields per state
+Box plots for number of species in each state, compiling the 6 fields per state
 
 ```r
 #Boxplot for the number of species per state
@@ -85,7 +85,7 @@ ggplot(data=oomy_data, aes(x=ct.precp, y=shannon)) +
 
 ![](Final_Project_files/figure-html/unnamed-chunk-7-2.png) 
 
-Evaluation of latitude in realtion to species diversity, in order to explore the raltionships, and also test a ecological perspective.
+Evaluation of latitude in relation to species diversity, in order to explore the relationships, and also test a ecological perspective.
 ![](Final_Project_files/figure-html/unnamed-chunk-8-1.png) ![](Final_Project_files/figure-html/unnamed-chunk-8-2.png) 
 
 As part of the model selection, different linear models were set, using diversity (Shannon index and OTU) as response variable, using temperature, latitude, precipitation as predictor variables. 
@@ -117,6 +117,8 @@ reg2.tempXprec <- lm(OTU ~ ct.precp*ct.precp, data=oomy_data)
 
 
 
+All the models were evaluated with delta AIC to determine the best fitting model using Shannon diversity index as a response variable.
+
 ```r
 #AIC selection of model using OTU as response
 aic.shannon
@@ -136,6 +138,7 @@ aic.shannon
 ## reg.tempXprec 7.4  3  0.0094
 ```
 
+All the models were evaluated with delta AIC to determine the best fitting model using OTU number as a response variable.
 
 ```r
 #AIC selection of model using OTU as response
@@ -157,6 +160,15 @@ aic.OTU
 ```
 
 
+
+
+The best fitting models were selected based on the delta AIC and other parameters were evaluated to confirm the selection of these models for both responses: Shannon diversity index and OTU number.
+
+```r
+#AIC, logLik and PRsq values for model using shannon
+stargazer(AIC.shannon, type="text", summary = FALSE)
+```
+
 ```
 ## 
 ## =======================
@@ -168,3 +180,205 @@ aic.OTU
 ## reg.latXprec 5  231.594
 ## -----------------------
 ```
+
+```r
+log.lik.shannon
+```
+
+```
+## [1] -110.9904 -110.9904 -110.9554 -110.7970
+```
+
+```r
+sapply(models.shannon,PRsq)
+```
+
+```
+##                     [,1]       [,2]       [,3]       [,4]      
+## FullModelRsquared   0.06486524 0.06486554 0.06545018 0.06808954
+## FullModelAdjustedR2 0.05636401 0.04770711 0.03949046 0.04220314
+## partials            List,2     List,2     List,2     List,2
+```
+
+```r
+#Summary for models using Shannon
+stargazer(models.shannon, type="text", digits=3, omit.stat="f", omit.table.layout="n")
+```
+
+```
+## 
+## =======================================================================================
+##                                             Dependent variable:                        
+##                     -------------------------------------------------------------------
+##                                                   shannon                              
+##                           (1)              (2)              (3)              (4)       
+## ---------------------------------------------------------------------------------------
+## ct.lat                  0.056***          0.056            0.056           0.049**     
+##                         (0.020)          (0.042)          (0.042)          (0.024)     
+##                                                                                        
+## ct.temp                                  -0.0003           0.002                       
+##                                          (0.051)          (0.052)                      
+##                                                                                        
+## ct.lat:ct.temp                                             0.002                       
+##                                                           (0.007)                      
+##                                                                                        
+## ct.precp                                                                   -0.0002     
+##                                                                            (0.002)     
+##                                                                                        
+## ct.lat:ct.precp                                                            -0.0004     
+##                                                                            (0.001)     
+##                                                                                        
+## Constant                2.123***         2.123***         2.135***         2.125***    
+##                         (0.062)          (0.062)          (0.078)          (0.063)     
+##                                                                                        
+## ---------------------------------------------------------------------------------------
+## Observations              112              112              112              112       
+## R2                       0.065            0.065            0.065            0.068      
+## Adjusted R2              0.056            0.048            0.039            0.042      
+## Residual Std. Error 0.658 (df = 110) 0.661 (df = 109) 0.664 (df = 108) 0.663 (df = 108)
+## =======================================================================================
+```
+
+```r
+#AIC, logLik and PRsq values for models using OTU
+stargazer(AIC.otu, type="text", summary = FALSE)
+```
+
+```
+## 
+## ========================
+##               df   AIC  
+## ------------------------
+## reg2.latXprec 5  805.474
+## reg2.temp     3  805.604
+## reg2.lat.prec 4  805.653
+## ------------------------
+```
+
+```r
+log.lik.OTU
+```
+
+```
+## [[1]]
+## 'log Lik.' -397.7368 (df=5)
+## 
+## [[2]]
+## 'log Lik.' -399.8022 (df=3)
+## 
+## [[3]]
+## 'log Lik.' -398.8263 (df=4)
+```
+
+```r
+sapply(models.OTU,PRsq)
+```
+
+```
+##                     [,1]       [,2]       [,3]      
+## FullModelRsquared   0.06752698 0.03249472 0.04920817
+## FullModelAdjustedR2 0.04162496 0.02369922 0.03176245
+## partials            List,2     List,2     List,2
+```
+
+```r
+#Summary for models usig OTU
+stargazer(models.OTU, type="text", digits=3, omit.stat="f", omit.table.layout="n")
+```
+
+```
+## 
+## ======================================================================
+##                                    Dependent variable:                
+##                     --------------------------------------------------
+##                                            OTU                        
+##                           (1)              (2)              (3)       
+## ----------------------------------------------------------------------
+## ct.lat                   0.192                             0.413      
+##                         (0.306)                           (0.268)     
+##                                                                       
+## ct.precp                 0.028                             0.044*     
+##                         (0.028)                           (0.025)     
+##                                                                       
+## ct.lat:ct.precp          -0.014                                       
+##                         (0.010)                                       
+##                                                                       
+## ct.temp                                  -0.623*                      
+##                                          (0.324)                      
+##                                                                       
+## Constant               13.831***        13.768***        13.768***    
+##                         (0.813)          (0.819)          (0.816)     
+##                                                                       
+## ----------------------------------------------------------------------
+## Observations              112              112              112       
+## R2                       0.068            0.032            0.049      
+## Adjusted R2              0.042            0.024            0.032      
+## Residual Std. Error 8.589 (df = 108) 8.669 (df = 110) 8.633 (df = 109)
+## ======================================================================
+```
+
+Evaluation of coefficient plots for shannon diversity index and OTU number.
+
+```r
+#Coefficient plots for Shannon diversity index
+par(mfrow = c(2,2))
+sapply(models.shannon,coefplot)
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-15-1.png) 
+
+```
+## [[1]]
+## NULL
+## 
+## [[2]]
+## NULL
+## 
+## [[3]]
+## NULL
+## 
+## [[4]]
+## NULL
+```
+
+```r
+#Coefficient plots for OTU number
+par(mfrow = c(2,2))
+sapply(models.OTU,coefplot)
+```
+
+```
+## [[1]]
+## NULL
+## 
+## [[2]]
+## NULL
+## 
+## [[3]]
+## NULL
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-15-2.png) 
+
+Evaluation of ACF on the residuals for the different models for both responses
+
+```r
+#ACF for models using Shannon
+par(mfrow = c(2,2))
+acf(resid(reg.lat))
+acf(resid(reg.lat.temp))
+acf(resid(reg.latXtemp))
+acf(resid(reg.latXprec))
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-16-1.png) 
+
+```r
+#ACF for models using Shannon
+par(mfrow = c(2,2))
+acf(resid(reg2.temp))
+acf(resid(reg2.lat.prec))
+acf(resid(reg2.latXprec))
+```
+
+![](Final_Project_files/figure-html/unnamed-chunk-16-2.png) 
